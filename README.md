@@ -10,7 +10,7 @@ Requisitos:
 ## Ejecutar
 
 ```sh
-npx @magonxesp/osaka -- https://www4.animeflv.net/anime/sousou-no-frieren
+npx @magonxesp/osaka https://www4.animeflv.net/anime/sousou-no-frieren
 ```
 
 ### Clonando el repositorio

@@ -1,6 +1,6 @@
 {
   "name": "@magonxesp/osaka",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Escrapeador de links de descarga de animes en AnimeFLV",
   "type": "module",
   "main": "dist/index.js",
@@ -8,7 +8,7 @@
     "osaka": "dist/index.js"
   },
   "scripts": {
-    "start": "tsx index.ts",
+    "start": "tsx src/index.ts",
     "build": "tsc"
   },
   "license": "MIT",
