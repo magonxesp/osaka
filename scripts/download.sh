@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 
 links_file="$1"
+download_dir="$2"
+
+if [[ "$download_dir" == "" ]]; then
+    download_dir="downloads"
+fi
+
+echo "Descargando episodios en: $(realpath "$download_dir")"
 
 if [[ "$links_file" == "" ]]; then
     echo "la ruta al fichero de links es obligatoria"
@@ -8,12 +15,21 @@ if [[ "$links_file" == "" ]]; then
     exit 1
 fi
 
-mkdir -p downloads
+if [[ -f "$download_dir" ]]; then
+    echo "La ruta tiene que ser un directorio"
+    exit 1
+fi
+
+if [[ ! -d "$download_dir" ]]; then
+    mkdir -p "$download_dir"
+fi
+
 sw_links="$(cat "$links_file" | jq '.SW.SUB.[] | strings')"
 
-cd downloads
+cd "$download_dir"
 for link in $sw_links
 do
     url="$(echo "$link" | xargs)"
+    echo "Descargando episodio desde: $url"
     curl -O "$url"
 done
