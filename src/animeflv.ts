@@ -135,7 +135,7 @@ export async function extractFromStreamWishOption(browser: Browser, url: string)
         await downloadPage.goto(downloadUrl)
 
         try {
-            await downloadPage.waitForSelector('.alert.alert-danger', {
+            await downloadPage.waitForSelector('.alert.alert-danger,.text-danger.text-center.mb-5', {
                 timeout: 2 * 1000
             })
 
