@@ -7,8 +7,6 @@ if [[ "$download_dir" == "" ]]; then
     download_dir="downloads"
 fi
 
-echo "Descargando episodios en: $(realpath "$download_dir")"
-
 if [[ "$links_file" == "" ]]; then
     echo "la ruta al fichero de links es obligatoria"
     echo "Ej: ./downloads.sh sousou-no-frieren-links.json"
@@ -24,6 +22,7 @@ if [[ ! -d "$download_dir" ]]; then
     mkdir -p "$download_dir"
 fi
 
+echo "Descargando episodios en: $(realpath "$download_dir")"
 sw_links="$(cat "$links_file" | jq '.SW.SUB.[] | strings')"
 
 cd "$download_dir"
