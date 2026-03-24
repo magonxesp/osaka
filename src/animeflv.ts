@@ -128,10 +128,28 @@ export async function extractFromStreamWishOption(browser: Browser, url: string)
             continue
         }
 
-        const videoId = videoUrl.replace('https://streamwish.to/e/', '')
-        const downloadUrl = `https://hglamioz.com/f/${videoId}_h`
-        await sleep(3 * 1000)
         const downloadPage = await browser.newPage()
+        await downloadPage.goto(videoUrl)
+
+        const host = await downloadPage.evaluate(() => window.location.host)
+        const videoId = videoUrl.replace('https://streamwish.to/e/', '')
+        const downloadLinksPageUrl = `https://${host}/f/${videoId}`
+
+        console.log('Extrayendo link a la pagina del boton de descargar en:', downloadLinksPageUrl)
+        const downloadLinksPageHtml = await fetch(downloadLinksPageUrl).then(response => response.text())
+        const downloadLinksPage = new JSDOM(downloadLinksPageHtml)
+        const downloadLink: HTMLAnchorElement | null = downloadLinksPage.window.document.querySelector('.downloadv-item')
+        let downloadUrl = downloadLink?.getAttribute('href')
+
+        if (downloadUrl == null) {
+            console.log('No se ha encontrado link de descarga en:', downloadLinksPageUrl)
+            continue
+        }
+
+        downloadUrl = `https://${host}${downloadUrl}`
+        console.log('Url a la pagina del boton de descargar resuelto:', downloadUrl)
+
+        await sleep(3 * 1000)
         await downloadPage.goto(downloadUrl)
 
         try {
