@@ -1,6 +1,8 @@
 # Osaka
 
-Escrapeador de links de descarga de animes en AnimeFLV
+Escrapeador de links de descarga de animes
+
+![](docs/sataandagi.jpeg)
 
 Requisitos:
 
