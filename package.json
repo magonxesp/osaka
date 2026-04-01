@@ -1,7 +1,7 @@
 {
   "name": "@magonxesp/osaka",
-  "version": "1.0.4",
-  "description": "Escrapeador de links de descarga de animes en AnimeFLV",
+  "version": "1.0.5",
+  "description": "Escrapeador de links de descarga de animes",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
