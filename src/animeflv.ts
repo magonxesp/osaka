@@ -1,17 +1,26 @@
 import { Browser } from "puppeteer";
 import { JSDOM } from "jsdom";
 import { sleep } from "./utils";
-
-export interface GroupedDownloadLinks {
-    [server: string]: {
-        [format: string]: string[];
-    };
-}
+import { GroupedDownloadLinks } from "./extractor";
 
 type Info = [string, string, string]
 type Episodes = [[number, number]]
 
 const baseUrl = 'https://www3.animeflv.net';
+
+export async function extract(browser: Browser, url: string): Promise<GroupedDownloadLinks> {
+    const [downloadLinks, swDownloadLinks] = await Promise.all([
+        extractFromDownloadLinks(browser, url),
+        extractFromStreamWishOption(browser, url)
+    ])
+
+    // add sw to discovered download links
+    downloadLinks.SW = {
+        SUB: swDownloadLinks
+    }
+
+    return downloadLinks
+}
 
 async function episodesLinks(_browser: Browser, url: string): Promise<string[]> {
     const episodesHtml = await fetch(url).then(response => response.text())
@@ -34,7 +43,7 @@ async function episodesLinks(_browser: Browser, url: string): Promise<string[]> 
     return episodes.map(([episode, _]) => `${baseUrl}/ver/${slug}-${episode}`)
 }
 
-export async function extractFromDownloadLinks(browser: Browser, url: string): Promise<GroupedDownloadLinks> {
+async function extractFromDownloadLinks(browser: Browser, url: string): Promise<GroupedDownloadLinks> {
     const groupedLinks: GroupedDownloadLinks = {};
 
     const links = await episodesLinks(browser, url)
@@ -94,7 +103,7 @@ type Videos = {
     }]
 }
 
-export async function extractFromStreamWishOption(browser: Browser, url: string): Promise<string[]> {
+async function extractFromStreamWishOption(browser: Browser, url: string): Promise<string[]> {
     const links: string[] = []
     const epLinks = await episodesLinks(browser, url)
 
@@ -194,3 +203,5 @@ export async function extractFromStreamWishOption(browser: Browser, url: string)
 
     return links
 }
+
+export default { extract }

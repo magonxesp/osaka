@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import fs from 'fs';
-import { extractFromDownloadLinks, extractFromStreamWishOption } from './animeflv';
+import animeflv from './animeflv';
 import { launchBrowser } from './browser';
 
 const url = process.argv[2];
@@ -16,15 +16,7 @@ const fileName = `${id}-links.json`;
 console.log('Saving links to ', fileName);
 
 try {
-  const [downloadLinks, swDownloadLinks] = await Promise.all([
-    extractFromDownloadLinks(browser, url),
-    extractFromStreamWishOption(browser, url)
-  ])
-
-  // add sw to discovered download links
-  downloadLinks.SW = {
-    SUB: swDownloadLinks
-  }
+  const downloadLinks = await animeflv.extract(browser, url)
 
   const json = JSON.stringify(downloadLinks, null, 2);
   fs.writeFileSync(fileName, json);
