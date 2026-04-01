@@ -204,4 +204,4 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
     return links
 }
 
-export default { extract }
+export default { baseUrl, extract }
