@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 import fs from 'fs';
-import animeflv from './animeflv';
-import animeav1 from './animeav1';
-import { launchBrowser } from './browser';
-import { GroupedDownloadLinks } from './extractor';
+import animeflv from './animeflv.js';
+import animeav1 from './animeav1.js';
+import { launchBrowser } from './browser.js';
+import { GroupedDownloadLinks } from './extractor.js';
 
 const url = process.argv[2];
 

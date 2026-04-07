@@ -1,7 +1,7 @@
 import { Browser } from "puppeteer";
 import { JSDOM } from "jsdom";
-import { sleep } from "./utils";
-import { GroupedDownloadLinks } from "./extractor";
+import { sleep } from "./utils.js";
+import { GroupedDownloadLinks } from "./extractor.js";
 
 type Info = [string, string, string]
 type Episodes = [[number, number]]

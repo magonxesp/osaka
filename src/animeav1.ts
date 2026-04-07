@@ -1,5 +1,5 @@
 import { Browser } from "puppeteer";
-import { GroupedDownloadLinks } from "./extractor";
+import { GroupedDownloadLinks } from "./extractor.js";
 
 const baseUrl = 'https://animeav1.com';
 
