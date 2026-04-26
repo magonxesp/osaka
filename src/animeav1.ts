@@ -15,7 +15,7 @@ async function extractEpisodesLinks(browser: Browser, url: string): Promise<stri
     await page.goto(url)
 
     const links = await page.evaluate(() => {
-        const links = Array.from(document.querySelectorAll('section:nth-child(3) a, section:nth-child(2) a'))
+        const links = Array.from(document.querySelectorAll('section.grid article[class*="group/item"] a'))
         return links.map(el => el.getAttribute('href'))
     })
 
