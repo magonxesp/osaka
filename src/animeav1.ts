@@ -22,7 +22,7 @@ async function extractEpisodesLinks(browser: Browser, url: string): Promise<stri
     console.log('found', links.length, 'links')
 
     const validLinks = links
-        .filter(link => link != null && link.startsWith('/media'))
+        .filter(link => link != null && /^\/media\/.+\/[0-9]+/.test(link))
         .map(link => `${baseUrl}${link}`)
 
     console.log(validLinks.length, 'links were valid')
