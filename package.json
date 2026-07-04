@@ -1,6 +1,6 @@
 {
   "name": "@magonxesp/osaka",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Escrapeador de links de descarga de animes",
   "type": "module",
   "main": "dist/index.js",
