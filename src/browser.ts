@@ -5,6 +5,8 @@ export async function launchBrowser() {
         headless: (process.env.OSAKA_HEADLESS_BROWSER ?? 'true') === 'true',
         defaultViewport: null,
         args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
             '--start-maximized'
         ],
     });
