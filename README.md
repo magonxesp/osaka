@@ -60,3 +60,19 @@ npm run build && npm publish --access public
 - **OSAKA_LOG_LEVEL**: Nivel maximo de los logs, puede ser: `debug`, `info`, `warn`.
 - **OSAKA_HEADLESS_BROWSER**: Por defecto `true`, `false` para ver la ventana del navegador.
 - **OSAKA_HTTP_PORT**: Permite cambiar el puerto en el que se escucha cuando arranca en modo HTTP server.
+
+
+## Arrancar con Docker
+
+```sh
+mkdir logs
+# Permisos al usuario node para que pueda escribir los logs en el volumen
+chown 1000:$UID logs
+
+docker run \
+    --name osaka \
+    -p 3000:3000 \
+    -v ./logs:/app/logs \
+    -e OSAKA_LOG_FILE=/app/logs/osaka.log \
+    magonx/osaka:latest http
+```

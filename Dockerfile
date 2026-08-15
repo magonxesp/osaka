@@ -21,10 +21,12 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends chromium \
     && rm -rf /var/lib/apt/lists/*
 
-COPY --from=builder --chown=node:node /build/node_modules node_modules
-COPY --from=builder --chown=node:node /build/package.json package.json
-COPY --from=builder --chown=node:node /build/package-lock.json package-lock.json
-COPY --from=builder --chown=node:node /build/dist dist
+COPY --from=builder /build/node_modules node_modules
+COPY --from=builder /build/package.json package.json
+COPY --from=builder /build/package-lock.json package-lock.json
+COPY --from=builder /build/dist dist
+
+RUN chown -R node:node /app
 
 USER node
 
