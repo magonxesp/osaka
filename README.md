@@ -51,3 +51,12 @@ Luego hacer la build y publicar:
 ```sh
 npm run build && npm publish --access public
 ```
+
+## Variables de entorno
+
+> ℹ️ Todas las variables de entorno son opcionales.
+
+- **OSAKA_LOG_FILE**: Ruta al fichero de logs.
+- **OSAKA_LOG_LEVEL**: Nivel maximo de los logs, puede ser: `debug`, `info`, `warn`.
+- **OSAKA_HEADLESS_BROWSER**: Por defecto `true`, `false` para ver la ventana del navegador.
+- **OSAKA_HTTP_PORT**: Permite cambiar el puerto en el que se escucha cuando arranca en modo HTTP server.

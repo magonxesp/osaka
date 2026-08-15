@@ -2,6 +2,7 @@
 import { program } from 'commander';
 import { extractLinksCommand } from './cli.js';
 import { log } from './logging.js';
+import { startHttpServer } from './http.js';
 
 program.name("osaka")
   .argument("<url>")
@@ -12,5 +13,10 @@ program.name("osaka")
       process.exit(1)
     })
   })
+
+program.command('http')
+  .description('Start osaka as HTTP server')
+  .option('-p, --port <port>', 'Server port', '3000')
+  .action(options => startHttpServer(options.port))
 
 program.parse()
