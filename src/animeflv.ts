@@ -1,7 +1,8 @@
 import { Browser } from "puppeteer";
 import { JSDOM } from "jsdom";
 import { sleep } from "./utils.js";
-import { GroupedDownloadLinks } from "./extractor.js";
+import { GroupedDownloadLinks } from "./links.js";
+import { log } from "./logging.js";
 
 type Info = [string, string, string]
 type Episodes = [[number, number]]
@@ -49,14 +50,14 @@ async function extractFromDownloadLinks(browser: Browser, url: string): Promise<
     const links = await episodesLinks(browser, url)
 
     for (const link of links) {
-        console.log(`navigating to ${link}`);
+        log.info('navigating to %s', link);
 
         const episodeHtml = await fetch(link).then(response => response.text())
         const episodePage = new JSDOM(episodeHtml)
 
-        console.log('extracting links from download table')
+        log.info('extracting links from download table')
         const tableRows = episodePage.window.document.querySelectorAll('#DwsldCn table tbody tr');
-        console.log('found', tableRows.length, 'rows in dowloads table')
+        log.info('found %d rows in dowloads table', tableRows.length)
 
         for (const row of tableRows) {
             const server = (row.querySelector('td:nth-child(1)') as HTMLElement | null)?.innerHTML ?? ''
@@ -64,7 +65,7 @@ async function extractFromDownloadLinks(browser: Browser, url: string): Promise<
             const getDownloadUrl = (row.querySelector('td:nth-child(4) a') as HTMLAnchorElement | null)?.getAttribute('href') ?? ''
 
             if (getDownloadUrl == null) {
-                console.warn(`download url not found on downloads table row`);
+                log.warn('download url not found on downloads table row');
                 continue;
             }
 
@@ -73,7 +74,7 @@ async function extractFromDownloadLinks(browser: Browser, url: string): Promise<
             const downloadUrlBtn: HTMLAnchorElement | null = downloadLinkPage.window.document.querySelector('.dwnl-btn');
 
             if (downloadUrlBtn == null) {
-                console.warn(`download link not found on ${getDownloadUrl}`);
+                log.warn('download link not found on %s', getDownloadUrl);
                 continue;
             }
 
@@ -108,14 +109,14 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
     const epLinks = await episodesLinks(browser, url)
 
     for (const link of epLinks) {
-        console.log(`[SW] navigating to ${link}`);
+        log.info('[SW] navigating to %s', link);
 
         const episodeHtml = await fetch(link).then(response => response.text())
         const episodePage = new JSDOM(episodeHtml)
         const script: HTMLScriptElement | null = episodePage.window.document.querySelector('body > script:nth-child(16)')
 
         if (script == null) {
-            console.log('videos script not found')
+            log.warn('videos script not found')
             continue
         }
 
@@ -123,7 +124,7 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
         const videosJson = (videosRegex.exec(script.innerHTML) ?? [])[1] ?? ''
 
         if (videosJson === '') {
-            console.log('unable to extract videos json')
+            log.warn('unable to extract videos json')
             continue
         }
 
@@ -133,7 +134,7 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
             .pop()?.code
 
         if (videoUrl == null) {
-            console.log('unable to find video on sw server')
+            log.warn('unable to find video on sw server')
             continue
         }
 
@@ -144,19 +145,19 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
         const videoId = videoUrl.replace('https://streamwish.to/e/', '')
         const downloadLinksPageUrl = `https://${host}/f/${videoId}`
 
-        console.log('Extrayendo link a la pagina del boton de descargar en:', downloadLinksPageUrl)
+        log.info('Extrayendo link a la pagina del boton de descargar en: %s', downloadLinksPageUrl)
         const downloadLinksPageHtml = await fetch(downloadLinksPageUrl).then(response => response.text())
         const downloadLinksPage = new JSDOM(downloadLinksPageHtml)
         const downloadLink: HTMLAnchorElement | null = downloadLinksPage.window.document.querySelector('.downloadv-item')
         let downloadUrl = downloadLink?.getAttribute('href')
 
         if (downloadUrl == null) {
-            console.log('No se ha encontrado link de descarga en:', downloadLinksPageUrl)
+            log.warn('No se ha encontrado link de descarga en: %s', downloadLinksPageUrl)
             continue
         }
 
         downloadUrl = `https://${host}${downloadUrl}`
-        console.log('Url a la pagina del boton de descargar resuelto:', downloadUrl)
+        log.info('Url a la pagina del boton de descargar resuelto: %s', downloadUrl)
 
         await sleep(3 * 1000)
         await downloadPage.goto(downloadUrl)
@@ -166,7 +167,7 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
                 timeout: 2 * 1000
             })
 
-            console.log('found page error on:', downloadUrl)
+            log.info('found page error on: %s', downloadUrl)
             downloadPage.close()
             continue
         } catch {
@@ -183,7 +184,7 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
             })
         ])
 
-        console.log('waiting for link button:', downloadUrl)
+        log.info('waiting for link button: %s', downloadUrl)
         await downloadPage.waitForSelector('.submit-btn')
 
         const downloadlink = await downloadPage.evaluate(() => {
@@ -192,7 +193,7 @@ async function extractFromStreamWishOption(browser: Browser, url: string): Promi
         })
 
         if (downloadlink == null) {
-            console.log('download link missing')
+            log.warn('download link missing')
             downloadPage.close()
             continue
         }

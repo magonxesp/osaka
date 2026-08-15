@@ -29,9 +29,12 @@ Ejecutar script con un link de animeflv por ejemplo:
 npm run start -- https://www4.animeflv.net/anime/sousou-no-frieren
 ```
 
-## Extraer links de un server y formato
+Los links se veran en la salida del comando.
+
+En caso de querer escribir los links en un fichero puedes usar la opcion `-o`
 
 ```sh
+npm run start -- https://www4.animeflv.net/anime/sousou-no-frieren -o links.json
 cat links.json | jq '.MEGA.SUB'
 ```
 

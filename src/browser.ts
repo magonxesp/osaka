@@ -8,7 +8,7 @@ const extensionPath = path.resolve(__dirname, 'ubol-extension');
 
 export async function launchBrowser() {
     return await puppeteer.launch({
-        headless: false,
+        headless: true,
         defaultViewport: null,
         args: [
             `--disable-extensions-except=${extensionPath}`,

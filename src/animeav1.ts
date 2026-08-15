@@ -1,6 +1,6 @@
 import { Browser } from "puppeteer";
-import { GroupedDownloadLinks } from "./extractor.js";
-import { sleep } from "./utils.js";
+import { GroupedDownloadLinks } from "./links.js";
+import { log } from "./logging.js"
 
 const baseUrl = 'https://animeav1.com';
 
@@ -19,14 +19,13 @@ async function extractEpisodesLinks(browser: Browser, url: string): Promise<stri
         return links.map(el => el.getAttribute('href'))
     })
 
-    console.log('found', links.length, 'links')
+    log.info('found %d links', links.length)
 
     const validLinks = links
         .filter(link => link != null && /^\/media\/.+\/[0-9]+/.test(link))
         .map(link => `${baseUrl}${link}`)
 
-    console.log(validLinks.length, 'links were valid')
-    console.log(validLinks)
+    log.info('valid links (%d): %o', validLinks.length, validLinks)
     return validLinks
 }
 
