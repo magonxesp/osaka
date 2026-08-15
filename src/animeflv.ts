@@ -1,7 +1,7 @@
 import { Browser } from "puppeteer";
 import { JSDOM } from "jsdom";
 import { sleep } from "./utils.js";
-import { GroupedDownloadLinks } from "./links.js";
+import { DownloadLinks, GroupedDownloadLinks } from "./links.js";
 import { log } from "./logging.js";
 
 type Info = [string, string, string]
@@ -9,7 +9,7 @@ type Episodes = [[number, number]]
 
 const baseUrl = 'https://www3.animeflv.net';
 
-export async function extract(browser: Browser, url: string): Promise<GroupedDownloadLinks> {
+export async function extract(browser: Browser, url: string): Promise<DownloadLinks> {
     const [downloadLinks, swDownloadLinks] = await Promise.all([
         extractFromDownloadLinks(browser, url),
         extractFromStreamWishOption(browser, url)
@@ -20,7 +20,7 @@ export async function extract(browser: Browser, url: string): Promise<GroupedDow
         SUB: swDownloadLinks
     }
 
-    return downloadLinks
+    return { title: '', links: downloadLinks }
 }
 
 async function episodesLinks(_browser: Browser, url: string): Promise<string[]> {

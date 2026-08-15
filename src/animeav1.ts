@@ -1,5 +1,5 @@
-import { Browser } from "puppeteer";
-import { GroupedDownloadLinks } from "./links.js";
+import { Browser, Page } from "puppeteer";
+import { DownloadLinks, GroupedDownloadLinks } from "./links.js";
 import { log } from "./logging.js"
 
 const baseUrl = 'https://animeav1.com';
@@ -10,10 +10,19 @@ interface DownloadLink {
     url: string
 }
 
-async function extractEpisodesLinks(browser: Browser, url: string): Promise<string[]> {
-    const page = await browser.newPage()
-    await page.goto(url)
+async function extractTitle(page: Page): Promise<string> {
+    const title = await page.evaluate(() => {
+        return document.querySelector('h1')?.textContent
+    })
 
+    if (!title) {
+        throw new Error('title not found')
+    }
+
+    return title
+}
+
+async function extractEpisodesLinks(page: Page): Promise<string[]> {
     const links = await page.evaluate(() => {
         const links = Array.from(document.querySelectorAll('section.grid article[class*="group/item"] a'))
         return links.map(el => el.getAttribute('href'))
@@ -29,9 +38,13 @@ async function extractEpisodesLinks(browser: Browser, url: string): Promise<stri
     return validLinks
 }
 
-async function extractFromDownloadLinks(browser: Browser, url: string): Promise<GroupedDownloadLinks> {
+async function extractFromDownloadLinks(browser: Browser, url: string): Promise<DownloadLinks> {
+    const animePage = await browser.newPage()
+    await animePage.goto(url)
+
     const groupedLinks: GroupedDownloadLinks = {};
-    const episodesLinks = await extractEpisodesLinks(browser, url)
+    const title = await extractTitle(animePage);
+    const episodesLinks = await extractEpisodesLinks(animePage)
     const page = await browser.newPage()
 
     for (const episodeLink of episodesLinks) {
@@ -75,7 +88,7 @@ async function extractFromDownloadLinks(browser: Browser, url: string): Promise<
     }
 
     page.close()
-    return groupedLinks
+    return { title, links: groupedLinks }
 }
 
 export default {

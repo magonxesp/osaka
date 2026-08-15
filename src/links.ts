@@ -1,7 +1,6 @@
 import { Browser } from "puppeteer";
 import animeflv from './animeflv.js';
 import animeav1 from './animeav1.js';
-import { launchBrowser } from './browser.js';
 
 export interface GroupedDownloadLinks {
     [server: string]: {
@@ -9,10 +8,15 @@ export interface GroupedDownloadLinks {
     };
 }
 
-export type Extractor = (browser: Browser, url: string) => Promise<GroupedDownloadLinks>
+export interface DownloadLinks {
+    title: string
+    links: GroupedDownloadLinks
+}
 
-export async function extractLinksFromUrl(browser: Browser, url: string): Promise<GroupedDownloadLinks> {
-    let links: GroupedDownloadLinks
+export type Extractor = (browser: Browser, url: string) => Promise<DownloadLinks>
+
+export async function extractLinksFromUrl(browser: Browser, url: string): Promise<DownloadLinks> {
+    let links: DownloadLinks
 
     if (url.startsWith(animeflv.baseUrl)) {
         links = await animeflv.extract(browser, url)
